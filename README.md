@@ -2,7 +2,7 @@
 
 ## **Upravljanje narudžbama u ugostiteljstvu**
 
-Projekt izrađen kao dio kolegija **Informacijski sustavi** na FIPU.
+Projekt izrađen u sklopu kolegija **Informacijski sustavi** na FIPU.
 
 Projekt je osmišljen za potrebe ugostiteljskih objekata, omogućujući jednostavno zaprimanje, praćenje i naplatu narudžbi te pregled zarade.
 
@@ -15,7 +15,6 @@ Projekt je osmišljen za potrebe ugostiteljskih objekata, omogućujući jednosta
 - dodavanje artikala (npr. pića i hrane),
 - kreiranje narudžbi po stolovima,
 - naplatu i evidenciju svake narudžbe,
-- izmjenu vremena narudžbe (korisno za testiranje zarade),
 - grafički prikaz zarade po danima.
 
 Frontend aplikacije je izrađen pomoću HTML-a, CSS-a i Bootstrapa, dok je backend napravljen u Pythonu s Flask okvirom. Za rad s bazom koristi se **PonyORM** i **SQLite**.
