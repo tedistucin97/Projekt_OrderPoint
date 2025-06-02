@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Narudžba</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+      .artikl-btn {
+         margin-bottom: 10px;
+      }
+
+      .artikl-btn:hover {
+         transform: scale(1.02);
+      }
+
+      .kategorija-naslov {
+         margin-top: 20px;
+      }
+
+      .stol-zauzet {
+         background-color: green !important;
+      }
+   </style>
+</head>
+
+<body class="bg-light">
+
+   <div class="container py-4">
+      <h2 id="naslov-stola">Narudžba za stol</h2>
+      <div class="row mt-4">
+         <div class="col-md-5">
+            <h4>Trenutna narudžba</h4>
+            <ul class="list-group mb-3" id="narudzba-lista">
+            </ul>
+            <button class="btn btn-success w-100" id="btn-predaj">Predaj narudžbu</button>
+         </div>
+         <div class="col-md-7">
+            <h4>Artikli</h4>
+            <div id="artikli-container">
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      const stolId = urlParams.get('stol');
+
+      if (!stolId) {
+         alert("Stol nije odabran!");
+         window.location.href = "index.html";
+      }
+
+      const narudzba = [];
+
+      document.addEventListener("DOMContentLoaded", () => {
+         document.getElementById("naslov-stola").innerText = `Narudžba za stol ${stolId}`;
+
+         fetch('/artikli')
+            .then(res => res.json())
+            .then(data => {
+               const artikliPoKategoriji = {};
+
+               data.forEach(a => {
+                  if (!artikliPoKategoriji[a.kategorija]) {
+                     artikliPoKategoriji[a.kategorija] = [];
+                  }
+                  artikliPoKategoriji[a.kategorija].push(a);
+               });
+
+               const container = document.getElementById("artikli-container");
+
+               for (const kategorija in artikliPoKategoriji) {
+                  const naslov = document.createElement("h5");
+                  naslov.classList.add("kategorija-naslov");
+                  naslov.textContent = kategorija;
+                  container.appendChild(naslov);
+
+                  artikliPoKategoriji[kategorija].forEach(a => {
+                     const btn = document.createElement("button");
+                     btn.className = "btn btn-outline-primary artikl-btn me-2";
+                     btn.textContent = `${a.naziv} (${a.cijena.toFixed(2)}€)`;
+                     btn.onclick = () => dodajUListu(a);
+                     container.appendChild(btn);
+                  });
+               }
+            });
+
+         function dodajUListu(artikl) {
+            const index = narudzba.findIndex(a => a.id === artikl.id);
+            if (index !== -1) {
+               narudzba[index].kolicina += 1;
+            } else {
+               narudzba.push({ ...artikl, kolicina: 1 });
+            }
+            prikaziNarudzbu();
+         }
+
+         function prikaziNarudzbu() {
+            const lista = document.getElementById("narudzba-lista");
+            lista.innerHTML = "";
+            narudzba.forEach(a => {
+               const li = document.createElement("li");
+               li.className = "list-group-item d-flex justify-content-between align-items-center";
+               li.innerHTML = `${a.naziv} × ${a.kolicina} <span>${(a.cijena * a.kolicina).toFixed(2)} €</span>`;
+               lista.appendChild(li);
+            });
+         }
+
+         document.getElementById("btn-predaj").addEventListener("click", predajNarudzbu);
+      });
+
+      function predajNarudzbu() {
+         if (narudzba.length === 0) {
+            alert("Dodaj barem jedan artikl u narudžbu!");
+            return;
+         }
+
+         fetch("/narudzbe", {
+            method: "POST",
+            headers: {
+               "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+               broj_stola: stolId,
+               stavke: narudzba.map(item => ({
+                  artikl_id: item.id,
+                  kolicina: item.kolicina
+               }))
+            })
+         })
+            .then(response => response.json())
+            .then(data => {
+               if (data.narudzba_id) {
+                  alert("Narudžba spremljena! ID: " + data.narudzba_id);
+                  window.location.href = "/";
+               } else {
+                  alert("Greška: " + (data.error || "Nepoznata greška"));
+               }
+            })
+            .catch(error => {
+               console.error("Greška prilikom slanja narudžbe:", error);
+               alert("Došlo je do greške prilikom slanja narudžbe.");
+            });
+      }
+   </script>
+
+</body>
+
+</html>

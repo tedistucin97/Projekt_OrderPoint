@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pregled artikala</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .artikl-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin-bottom: 6px;
+      background-color: #fff;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>📦 Artikli po kategorijama</h2>
+      <a href="index.html" class="btn btn-secondary">↩ Natrag</a>
+    </div>
+
+    <div id="artikli-container"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      fetch("/artikli")
+        .then(res => res.json())
+        .then(data => {
+          const poKategoriji = {};
+
+          data.forEach(a => {
+            if (!poKategoriji[a.kategorija]) {
+              poKategoriji[a.kategorija] = [];
+            }
+            poKategoriji[a.kategorija].push(a);
+          });
+
+          const container = document.getElementById("artikli-container");
+
+          for (const kategorija in poKategoriji) {
+            const div = document.createElement("div");
+            div.classList.add("mb-4");
+
+            const naslov = document.createElement("h5");
+            naslov.textContent = kategorija;
+            div.appendChild(naslov);
+
+            // Sortiraj po nazivu
+            poKategoriji[kategorija].sort((a, b) => a.naziv.localeCompare(b.naziv));
+
+            poKategoriji[kategorija].forEach(a => {
+              const artiklDiv = document.createElement("div");
+              artiklDiv.className = "artikl-row";
+
+              artiklDiv.innerHTML = `
+                <div>
+                  <strong>${a.naziv}</strong> (${a.cijena.toFixed(2)} €)
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-warning me-2" onclick="urediArtikl(${a.id}, '${a.naziv}', ${a.cijena}, '${a.kategorija}')">✏️</button>
+                  <button class="btn btn-sm btn-danger" onclick="obrisiArtikl(${a.id})">🗑️</button>
+                </div>
+              `;
+              div.appendChild(artiklDiv);
+            });
+
+            container.appendChild(div);
+          }
+        });
+    });
+
+    function obrisiArtikl(id) {
+      if (confirm("Želite li stvarno obrisati ovaj artikl?")) {
+        fetch(`/artikli/${id}`, {
+          method: "DELETE"
+        })
+          .then(res => res.json())
+          .then(data => {
+            alert(data.message || data.error);
+            location.reload();
+          });
+      }
+    }
+
+    function urediArtikl(id, naziv, cijena, kategorija) {
+      const noviNaziv = prompt("Novi naziv:", naziv);
+      if (!noviNaziv) return;
+
+      const novaCijena = prompt("Nova cijena (€):", cijena);
+      if (!novaCijena || isNaN(novaCijena)) return;
+
+      const novaKategorija = prompt("Nova kategorija:", kategorija);
+      if (!novaKategorija) return;
+
+      fetch(`/artikli/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          naziv: noviNaziv,
+          cijena: parseFloat(novaCijena),
+          kategorija: novaKategorija
+        })
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message || data.error);
+          location.reload();
+        });
+    }
+  </script>
+
+  <div class="text-center mt-5">
+   <a href="artikli.html" class="btn btn-success btn-lg">
+      ➕ Dodaj novi artikl
+   </a>
+   </div>
+
+</body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="hr">
+
+<head>
+   <meta charset="UTF-8">
+   <title>Odaberi stol</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+      .grid-container {
+         display: grid;
+         grid-template-columns: repeat(4, 100px);
+         grid-gap: 20px;
+         justify-content: center;
+      }
+
+      .stol {
+         width: 100px;
+         height: 100px;
+         border-radius: 15px;
+         background-color: orange;
+         color: white;
+         font-weight: bold;
+         font-size: 24px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         cursor: pointer;
+         transition: 0.2s;
+      }
+
+      .stol:hover {
+         background-color: darkorange;
+         transform: scale(1.05);
+      }
+   </style>
+</head>
+
+<body class="bg-dark text-white">
+
+   <div class="position-absolute top-0 start-0 m-4">
+      <div class="dropdown">
+         <button class="btn btn-outline-light dropdown-toggle" type="button" id="postavkeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            ⚙️ Postavke
+         </button>
+         <ul class="dropdown-menu dropdown-menu-start" aria-labelledby="postavkeDropdown">
+            <li><a class="dropdown-item" href="pregled_artikala.html">🛠️ Uredi artikle</a></li>
+            <li><a class="dropdown-item" href="narudzbe.html">📋 Pregled narudžbi</a></li>
+            <li><a class="dropdown-item" href="zarada.html">📊 Graf zarade</a></li>
+         </ul>
+      </div>
+   </div>
+
+
+   <div class="container text-center py-5">
+      <h2 class="mb-4">Odaberi stol</h2>
+      <div class="grid-container">
+         <a href="narudzba.html?stol=1">
+            <div class="stol">1</div>
+         </a>
+         <a href="narudzba.html?stol=2">
+            <div class="stol">2</div>
+         </a>
+         <a href="narudzba.html?stol=3">
+            <div class="stol">3</div>
+         </a>
+         <a href="narudzba.html?stol=4">
+            <div class="stol">4</div>
+         </a>
+         <a href="narudzba.html?stol=5">
+            <div class="stol">5</div>
+         </a>
+         <a href="narudzba.html?stol=6">
+            <div class="stol">6</div>
+         </a>
+         <a href="narudzba.html?stol=7">
+            <div class="stol">7</div>
+         </a>
+         <a href="narudzba.html?stol=8">
+            <div class="stol">8</div>
+         </a>
+         <a href="narudzba.html?stol=9">
+            <div class="stol">9</div>
+         </a>
+         <a href="narudzba.html?stol=10">
+            <div class="stol">10</div>
+         </a>
+         <a href="narudzba.html?stol=11">
+            <div class="stol">11</div>
+         </a>
+         <a href="narudzba.html?stol=12">
+            <div class="stol">12</div>
+         </a>
+      </div>
+
+   </div>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
